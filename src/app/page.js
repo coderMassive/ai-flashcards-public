@@ -33,7 +33,7 @@ export default function Home() {
         const docRef2 = doc(db, "payments/" + email);
         const docSnap2 = await getDoc(docRef2);
         if (docSnap.exists() && docSnap.data().freeTrialUsed && !(docSnap2.exists() && docSnap2.data().payed)) {
-          push("https://buy.stripe.com/test_28o6qSdzm7hbaOYaEE");
+          push("https://buy.stripe.com/aEU4km4tf9KlcuYeUU");
           return;
         } else {
           setDoc(docRef, {
