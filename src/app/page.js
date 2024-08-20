@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { doc, setDoc } from "firebase/firestore"; 
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation';
+import { doc, setDoc, getDoc } from "firebase/firestore"; 
 import { useUser } from '@clerk/clerk-react';
 import db from '../firebase';
 
@@ -18,10 +19,26 @@ export default function Home() {
 
     const { user } = useUser()
 
+    const { push } = useRouter();
+
     const handleSubmit = async () => {
         if (!text.trim()) {
             alert('Please enter some text to generate flashcards.')
             return
+        }
+
+        const docRef = doc(db, "users/" + user.id);
+        const docSnap = await getDoc(docRef);
+        const email = user.primaryEmailAddress.emailAddress;
+        const docRef2 = doc(db, "payments/" + email);
+        const docSnap2 = await getDoc(docRef2);
+        if (docSnap.exists() && docSnap.data().freeTrialUsed && !(docSnap2.exists() && docSnap2.data().payed)) {
+          push("https://buy.stripe.com/test_28o6qSdzm7hbaOYaEE");
+          return;
+        } else {
+          setDoc(docRef, {
+            freeTrialUsed: true
+          })
         }
 
         try {
